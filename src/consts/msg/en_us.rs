@@ -5,3 +5,7 @@ pub const ERR_ARG_NOT_CONVERTIBLE_TO_UTF_8: &str = "Error: supplied command-line
 pub const ERR_ARG_NOT_CONVERTIBLE_TO_NON_ZERO_USIZE: &str = "Error: supplied command-line argument not convertible to `NonZeroUsize`";
 /// Supplied argument could not be recognized as an integer.  Examples include "hello" and "12j5."
 pub const ERR_PARSE_INT: &str = "Error parsing integer value";
+/// Supplied argument could not be recognized as an floating point value.  Examples include "hello" and "12j5."
+pub const ERR_PARSE_FLOAT: &str = "Error parsing floating point value";
+/// Supplied value could not be converted into a probability (0.0 <= n <= 1.0).
+pub const ERR_INVALID_PROBABILITY_RANGE: &str = "Error: supplied value not convertible into a proability (a value from 0.0 to 1.0, inclusive)";

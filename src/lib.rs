@@ -36,13 +36,15 @@ use std::result::Result as StdResult;
 pub use self::{
     args::Args,
     error::Error,
-    model::Model,
+    game_board::GameBoard,
+    ranged_num::Probability,
 };
 
 mod args;
 mod consts;
 mod error;
-mod model;
+mod game_board;
+mod ranged_num;
 /// Convenience alias for the `Result` type encoding `minecraft::error::Error` as the default error type.
 pub type Result<T> = StdResult<T, Error>;
 

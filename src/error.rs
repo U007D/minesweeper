@@ -5,7 +5,10 @@ use std::{
         Formatter,
         Result as FmtResult,
     },
-    num::ParseIntError,
+    num::{
+        ParseFloatError,
+        ParseIntError,
+    },
 };
 // For doc comment reference
 #[allow(unused_imports)]
@@ -18,14 +21,20 @@ use crate::consts::*;
 #[derive(Debug, PartialEq)]
 pub enum Error {
     /// Returned when a provided argument is not convertible to `UTF-8` (required in order to be a [String] in Rust).
-    /// The argument is provided as this variant's payload to facilitate debugging.
+    /// The argument is provided as this variant's payload for informational purposes.
     ArgNotConvertibleToUtf8(OsString),
     /// Returned when a provided argument is not convertible to [NonZeroUsize].  The failing argument is
-    /// provided as this variant's payload to facilitate debugging.
+    /// provided as this variant's payload for informational purposes.
     ArgNotConvertibleToNonZeroUsize(usize),
     /// Returned when a provided argument is not convertible to an integer.  The original error is provided as this
-    /// variant's payload to facilitate debugging.
+    /// variant's payload for informational purposes.
     ParseInt(ParseIntError),
+    /// Returned when a provided argument is not convertible to an floating point value.  The original error is provided
+    /// as this variant's payload for informational purposes.
+    ParseFloat(ParseFloatError),
+    /// Returned when a provided value is not convertible to a probability, which ranges from 0.0 to 1.0, inclusive.
+    /// The invalid value is provided as this variant's payload for informational purposes.
+    InvalidProbabilityRange(f64),
 }
 
 impl Display for Error {
@@ -35,9 +44,11 @@ impl Display for Error {
                                                                  msg::ERR_ARG_NOT_CONVERTIBLE_TO_UTF_8,
                                                                  os_string),
             Error::ArgNotConvertibleToNonZeroUsize(val) => format!("{}: {:?}",
-                                                                 msg::ERR_ARG_NOT_CONVERTIBLE_TO_NON_ZERO_USIZE,
-                                                                 val),
+                                                                   msg::ERR_ARG_NOT_CONVERTIBLE_TO_NON_ZERO_USIZE,
+                                                                   val),
             Error::ParseInt(err) => format!("{}: {}", msg::ERR_PARSE_INT, err),
+            Error::ParseFloat(err) => format!("{}: {}", msg::ERR_PARSE_FLOAT, err),
+            Error::InvalidProbabilityRange(val) => format!("{}: {}", msg::ERR_INVALID_PROBABILITY_RANGE, val),
         })
     }
 }
@@ -51,5 +62,11 @@ impl From<OsString> for Error {
 impl From<ParseIntError> for Error {
     fn from(err: ParseIntError) -> Self {
         Error::ParseInt(err)
+    }
+}
+
+impl From<ParseFloatError> for Error {
+    fn from(err: ParseFloatError) -> Self {
+        Error::ParseFloat(err)
     }
 }
