@@ -1,4 +1,7 @@
-use std::num::NonZeroUsize;
+use std::{
+    num::NonZeroUsize,
+    slice::Iter,
+};
 
 use crate::Probability;
 
@@ -12,14 +15,20 @@ mod unit_tests;
 #[derive(Debug)]
 pub struct GameBoard {
     cells: CellsVec,
+    rows: NonZeroUsize,
+    cols: NonZeroUsize,
     prob: Probability,
 }
 
 impl GameBoard {
     /// Game board constructor.
     pub fn new(rows: NonZeroUsize, cols: NonZeroUsize, prob: Probability) -> Self {
+        // TODO: Replace range-check with ranged type
+        if rows.get() > 2_usize.pow(26) || cols.get() > 2_usize.pow(26) { panic!("board overflow"); }
         Self {
             cells: Self::init_cells(rows, cols, prob),
+            rows,
+            cols,
             prob,
         }
     }
@@ -30,19 +39,22 @@ impl GameBoard {
         vec
     }
 
+    /// Create ref iterator over game board rows
+    pub fn iter(&self) -> Iter<Vec<bool>> {
+        self.cells.iter()
+    }
+
     /// Returns the number of game board columns
     #[inline]
-    pub fn cols(&self) -> usize {
-        // Weak change insurance
-        dbg_assert!(self.rows() > 0);
-        // Game board constructor precludes 0-sized dimensions
-        #[allow(unsafe)]
-            unsafe { self.cells.get_unchecked(0).len() }
-    }
+    pub fn columns(&self) -> NonZeroUsize { self.cols }
+
+    /// Returns the probability of a mine in a given cell setting used to initialize the game board
+    #[inline]
+    pub fn probability(&self) -> Probability { self.prob }
 
     /// Returns the number of game board rows
     #[inline]
-    pub fn rows(&self) -> usize {
-        self.cells.len()
+    pub fn rows(&self) -> NonZeroUsize {
+        self.rows
     }
 }

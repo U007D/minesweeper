@@ -1,7 +1,7 @@
 #![warn(clippy::all)]
-#![forbid(unsafe_code)] // Do not remove!  Explicitly change to #![allow(unsafe_code)] to use `unsafe` keyword.
-#![forbid(overflowing_literals)]
+#![allow(unsafe_code)] // Do not remove!  Explicitly change `forbid` to #![allow(unsafe_code)] to use `unsafe` keyword.
 #![deny(warnings, missing_docs)]
+#![forbid(overflowing_literals)]
 // Uncomment before ship to ensure complete docs, reconcile use of possibly redundant crates and uncover debugremnants
 //#![warn(missing_docs, clippy::multiple_crate_versions, clippy::print_stdout, clippy::unimplemented,
 //        clippy::use_debug)]
@@ -30,11 +30,11 @@
 //! representing the board as the `Model`.  The state of revealed cells (revealed vs not revealed, as well as the number
 //! of adjacent mines) on the game board is represented in a structure as the `View`.  And finally the rules of
 //! gameplay are enforced by the `Controller`.
-pub use consts::*;
 use std::result::Result as StdResult;
 
 pub use self::{
     args::Args,
+    consts::*,
     error::Error,
     game_board::GameBoard,
     ranged_num::Probability,

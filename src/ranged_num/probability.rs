@@ -26,7 +26,7 @@ impl Probability {
     }
 
     /// Inner value Accessor.
-    pub fn get(&self) -> f64 {
+    pub fn get(self) -> f64 {
         self.0
     }
 }
