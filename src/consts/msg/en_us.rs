@@ -9,3 +9,5 @@ pub const ERR_PARSE_INT: &str = "Error parsing integer value";
 pub const ERR_PARSE_FLOAT: &str = "Error parsing floating point value";
 /// Supplied value could not be converted into a probability (0.0 <= n <= 1.0).
 pub const ERR_INVALID_PROBABILITY_RANGE: &str = "Error: supplied value not convertible into a proability (a value from 0.0 to 1.0, inclusive)";
+/// Index of unmined cells cannot be found
+pub const ERR_INTERNAL_UNMINED_INDEX_NOT_FOUND: &str = "Internal Error: index of unmined cells not found";

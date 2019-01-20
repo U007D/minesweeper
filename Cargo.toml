@@ -1,8 +1,8 @@
 [package]
-name = "minesweeper"
-version = "0.1.0"
 authors = ["Brad Gibson <b2b@humanenginuity.com>"]
 edition = "2018"
+name = "minesweeper"
+version = "0.1.0"
 
 [[bin]]
 doc = false
@@ -11,8 +11,9 @@ path = "src/main.rs"
 test = false
 
 [dependencies]
+indexmap = "1.0.2"
+rand = "0.6.4"
 structopt = "0.2.14"
-
 [profile.dev]
 codegen-units = 1
 debug = true
