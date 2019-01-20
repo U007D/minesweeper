@@ -1,17 +1,14 @@
-use indexmap::IndexSet;
-use rand::{
-    Rng,
-    thread_rng,
-};
 use std::{
     num::NonZeroUsize,
     slice::Iter,
 };
 
-use crate::{
-    consts::*,
-    Probability,
+use rand::{
+    Rng,
+    thread_rng,
 };
+
+use crate::Probability;
 
 // Alias game board storage type to facilitate possible future optimizations
 // (e.g. [bit-vec](https://crates.io/crates/bit-vec))
@@ -23,56 +20,55 @@ mod unit_tests;
 #[derive(Debug)]
 pub struct GameBoard {
     cells: CellsVec,
-    rows: NonZeroUsize,
-    cols: NonZeroUsize,
+    rows_nz: NonZeroUsize,
+    cols_nz: NonZeroUsize,
     prob: Probability,
 }
 
 impl GameBoard {
     /// Game board constructor.
-    pub fn new(rows: NonZeroUsize, cols: NonZeroUsize, prob: Probability) -> Self {
+    pub fn new(rows_nz: NonZeroUsize, cols_nz: NonZeroUsize, prob: Probability) -> Self {
+        let rows = rows_nz.get();
+        let cols = cols_nz.get();
         // TODO: Replace range-check with ranged type
-        // TODO: set max at min(usize_bits, f64_mantissa_bits) / 2
-        // 2^26 each to prevent product overflowing f64's 52-bit mantissa
-        if rows.get() > 2_usize.pow(26) || cols.get() > 2_usize.pow(26) { panic!("board overflow"); }
+        // TODO: set max at min(usize_bits, 0_u32.count_zeros()) / 2
+        // 2^16 each to prevent product overflowing usize == u32 (and f64's 52-bit mantissa)
+        if rows > 2_usize.pow(16) || cols > 2_usize.pow(16) { panic!("board overflow"); }
         Self {
-            cells: Self::init_cells(rows, cols, prob),
-            rows,
-            cols,
+            cells: Self::init_cells(vec![vec![false; cols]; rows], prob),
+            rows_nz,
+            cols_nz,
             prob,
         }
     }
 
-    fn init_cells(rows: NonZeroUsize, cols: NonZeroUsize, prob: Probability) -> CellsVec {
-        let rows_inner = rows.get();
-        let cols_inner = cols.get();
-        // no overflow ∵ `rows_inner` & `cols_inner` max at 2^16 or 2^26 each (depending on usize).
-        #[allow(clippy::integer_arithmetic)]
-        let cell_count = rows_inner * cols_inner;
-
-        let mut cells = vec![vec![false; cols_inner]; rows_inner];
-        // no overflow ∵ `rows` and `cols` are each range limited to half of an `f64`'s 52-bit mantissa
-        #[allow(clippy::cast_precision_loss, clippy::cast_sign_loss, clippy::cast_possible_truncation)]
-        let mine_count = ((rows_inner * cols_inner) as f64 * *prob) as usize;
+    fn init_cells(mut cells: CellsVec, prob: Probability) -> CellsVec {
+        let rows = cells.len();
+        // no out-of-bounds indexing ∵ `rows` must be > 0 as per `NonZeroUsize`.
+        #[allow(clippy::indexing_slicing)]
+            let cols = cells[0].len();
         let mut rng = thread_rng();
-        let mut unmined = IndexSet::with_capacity(cell_count);
-        (0..cell_count).for_each(|i| { unmined.insert(i); });
 
-        (0..mine_count).for_each(|_i| {
-            let idx = rng.gen_range(0, unmined.len());
-            let val = *unmined.get_index(idx).expect(msg::ERR_INTERNAL_UNMINED_INDEX_NOT_FOUND);
-            unmined.remove(&val);
-
-            // no divide by zero ∵ `cols_inner` is derived from `cols` which is `NonZeroUsize`
-            #[allow(clippy::integer_arithmetic)]
-            {
-                let row = idx / cols_inner;
-                let col = idx % cols_inner;
-                // no out of bounds ∵ `row` & `col` indices derived from game board dimensions (ie. get_unchecked() OK)
+        // no precision loss or overflow ∵ `rows` & `cols` are limited to 16 bits and prob (0..=1).
+        #[allow(clippy::cast_possible_truncation, clippy::cast_precision_loss, clippy::cast_sign_loss)]
+            let mine_count = (rows as f64 * cols as f64 * *prob) as usize;
+        (0..mine_count).for_each(|_| {
+            let mut row: usize;
+            let mut col: usize;
+            while {
+                row = rng.gen_range(0, rows);
+                col = rng.gen_range(0, cols);
+                //
+                // no out-of-bounds indexing  ∵ `row` & `col` are bound by `rows` & `cols.
                 #[allow(clippy::indexing_slicing)]
                 {
-                    cells[row][col] = true;
+                    cells[row][col]
                 }
+            } {}
+            // no out-of-bounds indexing  ∵ `row` & `col` are bound by `rows` & `cols.
+            #[allow(clippy::indexing_slicing)]
+                {
+                    cells[row][col] = true;
             }
         });
 
@@ -86,7 +82,7 @@ impl GameBoard {
 
     /// Returns the number of game board columns
     #[inline]
-    pub fn columns(&self) -> NonZeroUsize { self.cols }
+    pub fn columns(&self) -> NonZeroUsize { self.cols_nz }
 
     /// Returns the probability of a mine in a given cell setting used to initialize the game board
     #[inline]
@@ -95,6 +91,6 @@ impl GameBoard {
     /// Returns the number of game board rows
     #[inline]
     pub fn rows(&self) -> NonZeroUsize {
-        self.rows
+        self.rows_nz
     }
 }
