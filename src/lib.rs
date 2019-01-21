@@ -37,7 +37,10 @@ pub use self::{
     consts::*,
     error::Error,
     game_board::GameBoard,
-    ranged_num::Probability,
+    ranged_num::{
+        BoardDimension,
+        Probability,
+    },
 };
 
 mod args;

@@ -1,12 +1,11 @@
 Command-line [Minesweeper](https://en.wikipedia.org/wiki/Minesweeper_(video_game)) game implemented in Rust as an
 exercise.  (Currently under development)
 
-Although this code is a simple console implementation of Minesweeper, this code was written as if it were a 
+Although this code is a simple console implementation of Minesweeper, this code was written as if it were a production
 business-critical application adhering to the following **prioritized** tenets:
 1) correctness (performs correctly and reliably (i.e. no panics))
 2) maintainability 
-(principlaly loose coupling via SOLID, use of typestate, and expressive functional style wherever possible, 
-documentation) and
+(loose coupling via SOLID, use of typestate, and expressive functional style wherever possible, documentation) and
 3) performance
 
 In particular, note the crate-wide strict warning settings and the safe consideration/handling/elision of indexing, 

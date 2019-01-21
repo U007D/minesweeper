@@ -4,8 +4,8 @@ use super::*;
 #[test]
 fn new_with_1_row_and_2_cols_yields_1_x_2_board() {
     // setup
-    let expected_rows = NonZeroUsize::new(1).unwrap();
-    let expected_cols = NonZeroUsize::new(2).unwrap();
+    let expected_rows = BoardDimension::new(1).unwrap();
+    let expected_cols = BoardDimension::new(2).unwrap();
     let expected_prob = Probability::new(0).unwrap();
 
     // given a `GameBoard` constructor
@@ -29,12 +29,10 @@ fn new_with_mine_probability_0_yields_board_with_no_mines() {
     // setup
     let n_rows = 100;
     let n_cols = 100;
-    let rows = NonZeroUsize::new(n_rows).unwrap();
-    let cols = NonZeroUsize::new(n_cols).unwrap();
+    let rows = BoardDimension::new(n_rows).unwrap();
+    let cols = BoardDimension::new(n_cols).unwrap();
     let prob = Probability::new(0).unwrap();
-    // `rows` and `cols` are each range limited to half of an `f64`'s 52-bit mantissa; `prob` is range limited (0..=1)
-    #[allow(clippy::cast_precision_loss, clippy::cast_sign_loss, clippy::cast_possible_truncation)]
-        let expected_mine_count = 0;
+    let expected_mine_count = 0;
 
     // given a `GameBoard` constructor
     let sut = GameBoard::new;
@@ -55,12 +53,12 @@ fn new_with_mine_probability_1_yields_board_with_all_mines() {
     // setup
     let n_rows = 3;
     let n_cols = 3;
-    let rows = NonZeroUsize::new(n_rows).unwrap();
-    let cols = NonZeroUsize::new(n_cols).unwrap();
+    let rows = BoardDimension::new(n_rows).unwrap();
+    let cols = BoardDimension::new(n_cols).unwrap();
     let prob = Probability::new(1).unwrap();
-    // `rows` and `cols` are each range limited to half of an `f64`'s 52-bit mantissa; `prob` is range limited (0..=1)
-    #[allow(clippy::cast_precision_loss, clippy::cast_sign_loss, clippy::cast_possible_truncation)]
-        let expected_mine_count = rows.get() * cols.get();
+    // `rows` and `cols` are each range-limited per `BoardDimension` and their product cannot overflow a `u32`.
+    #[allow(clippy::integer_arithmetic)]
+        let expected_mine_count = usize::from(rows.get()) * usize::from(cols.get());
 
     // given a `GameBoard` constructor
     let sut = GameBoard::new;
@@ -81,12 +79,10 @@ fn new_3_x_3_with_mine_probability_0_point_5_yields_board_with_4_mines() {
     // setup
     let n_rows = 3;
     let n_cols = 3;
-    let rows = NonZeroUsize::new(n_rows).unwrap();
-    let cols = NonZeroUsize::new(n_cols).unwrap();
+    let rows = BoardDimension::new(n_rows).unwrap();
+    let cols = BoardDimension::new(n_cols).unwrap();
     let prob = Probability::new(0.5).unwrap();
-    // `rows` and `cols` are each range limited to half of an `f64`'s 52-bit mantissa; `prob` is range limited (0..=1)
-    #[allow(clippy::cast_precision_loss, clippy::cast_sign_loss, clippy::cast_possible_truncation)]
-        let expected_mine_count = 4;
+    let expected_mine_count = 4;
 
     // given a `GameBoard` constructor
     let sut = GameBoard::new;

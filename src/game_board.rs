@@ -1,14 +1,14 @@
-use std::{
-    num::NonZeroUsize,
-    slice::Iter,
-};
+use std::slice::Iter;
 
 use rand::{
     Rng,
     thread_rng,
 };
 
-use crate::Probability;
+use crate::{
+    BoardDimension,
+    Probability,
+};
 
 // Alias game board storage type to facilitate possible future optimizations
 // (e.g. [bit-vec](https://crates.io/crates/bit-vec))
@@ -20,58 +20,54 @@ mod unit_tests;
 #[derive(Debug)]
 pub struct GameBoard {
     cells: CellsVec,
-    rows_nz: NonZeroUsize,
-    cols_nz: NonZeroUsize,
+    rows: BoardDimension,
+    cols: BoardDimension,
     prob: Probability,
 }
 
 impl GameBoard {
     /// Game board constructor.
-    pub fn new(rows_nz: NonZeroUsize, cols_nz: NonZeroUsize, prob: Probability) -> Self {
-        let rows = rows_nz.get();
-        let cols = cols_nz.get();
-        // TODO: Replace range-check with ranged type
-        // TODO: set max at min(usize_bits, 0_u32.count_zeros()) / 2
-        // 2^16 each to prevent product overflowing usize == u32 (and f64's 52-bit mantissa)
-        if rows > 2_usize.pow(16) || cols > 2_usize.pow(16) { panic!("board overflow"); }
+    pub fn new(rows: BoardDimension, cols: BoardDimension, prob: Probability) -> Self {
+        let n_rows = usize::from((*rows).get());
+        let n_cols = usize::from((*cols).get());
         Self {
-            cells: Self::init_cells(vec![vec![false; cols]; rows], prob),
-            rows_nz,
-            cols_nz,
+            cells: Self::init_cells(vec![vec![false; n_cols]; n_rows], prob),
+            rows,
+            cols,
             prob,
         }
     }
 
     fn init_cells(mut cells: CellsVec, prob: Probability) -> CellsVec {
-        let rows = cells.len();
-        // no out-of-bounds indexing ∵ `rows` must be > 0 as per `NonZeroUsize`.
+        let n_rows = cells.len();
+        // no out-of-bounds indexing ∵ `n_rows` must be > 0 as per `NonZeroUsize`.
         #[allow(clippy::indexing_slicing)]
-            let cols = cells[0].len();
+            let n_cols = cells[0].len();
         let mut rng = thread_rng();
 
-        // no precision loss or overflow ∵ `rows` & `cols` are limited to 16 bits and prob (0..=1).
+        // no precision loss or overflow ∵ `n_rows` & `n_cols` are limited to 16 bits per `BoardDimension` and prob (0..=1).
         #[allow(clippy::cast_possible_truncation, clippy::cast_precision_loss, clippy::cast_sign_loss)]
-            let mine_count = (rows as f64 * cols as f64 * *prob) as usize;
+            let mine_count = (n_rows as f64 * n_cols as f64 * *prob) as usize;
         (0..mine_count).for_each(|_| {
-            let mut row: usize;
-            let mut col: usize;
+            let mut row_idx: usize;
+            let mut col_idx: usize;
             // place a mine in a randomly selected cell which must not already contain a mine.
             // If that cell does already contain a mine, reassign this mine to another randomly selected cell, until
             // one is found which does not already contain a mine.
             while {
-                row = rng.gen_range(0, rows);
-                col = rng.gen_range(0, cols);
+                row_idx = rng.gen_range(0, n_rows);
+                col_idx = rng.gen_range(0, n_cols);
 
-                // no out-of-bounds indexing  ∵ `row` & `col` are bound by `rows` & `cols.
+                // no out-of-bounds indexing  ∵ `row_idx` & `col_idx` are bound by `n_rows` & `n_cols.
                 #[allow(clippy::indexing_slicing)]
                 {
-                    match &mut cells[row][col] {
+                    match &mut cells[row_idx][col_idx] {
                         // already has a mine; select another cell for this mine
                         true => true,
                         // cell contains no pre-existing mine: assign the mine to this cell and
                         // exit the reassignment while loop
-                        val => {
-                            *val = true;
+                        cell => {
+                            *cell = true;
                             false
                         }
                     }
@@ -88,7 +84,7 @@ impl GameBoard {
 
     /// Returns the number of game board columns
     #[inline]
-    pub fn columns(&self) -> NonZeroUsize { self.cols_nz }
+    pub fn columns(&self) -> BoardDimension { self.cols }
 
     /// Returns the probability of a mine in a given cell setting used to initialize the game board
     #[inline]
@@ -96,7 +92,5 @@ impl GameBoard {
 
     /// Returns the number of game board rows
     #[inline]
-    pub fn rows(&self) -> NonZeroUsize {
-        self.rows_nz
-    }
+    pub fn rows(&self) -> BoardDimension { self.rows }
 }
