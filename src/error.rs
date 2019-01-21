@@ -44,7 +44,7 @@ impl Display for Error {
                                                                  msg::ERR_ARG_NOT_CONVERTIBLE_TO_UTF_8,
                                                                  os_string),
             Error::ArgNotConvertibleToNonZeroUsize(val) => format!("{}: {:?}",
-                                                                   msg::ERR_ARG_NOT_CONVERTIBLE_TO_NON_ZERO_INT,
+                                                                   msg::ERR_ARG_NOT_CONVERTIBLE_TO_NON_ZERO_USIZE,
                                                                    val),
             Error::ParseInt(err) => format!("{}: {}", msg::ERR_PARSE_INT, err),
             Error::ParseFloat(err) => format!("{}: {}", msg::ERR_PARSE_FLOAT, err),

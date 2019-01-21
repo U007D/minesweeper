@@ -1,10 +1,6 @@
 use std::{
     num::NonZeroU16,
-    ops::Deref,
-    u16,
 };
-
-use crate::consts::*;
 
 #[cfg(test)]
 mod unit_tests;
@@ -18,19 +14,13 @@ pub struct BoardDimension(NonZeroU16);
 impl BoardDimension {
     /// Constructor.
     pub fn new(n: u16) -> Option<Self> {
-        match n {
-            1..=u16::MAX => Some(Self(NonZeroU16::new(n)
-                .expect(msg::ERR_ARG_NOT_CONVERTIBLE_TO_NON_ZERO_USIZE))),
-            _ => None,
-        }
+        NonZeroU16::new(n)
+            .map(Self)
+    }
+
+    /// Inner value Accessor.  As a dimension, `usize` is returned, rather than leaking information about the current
+    /// implementation's inner type.
+    pub fn get(self) -> usize {
+        usize::from(self.0.get())
     }
 }
-
-impl Deref for BoardDimension {
-    type Target = NonZeroU16;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-

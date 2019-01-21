@@ -4,24 +4,28 @@ use super::*;
 #[test]
 fn new_with_1_row_and_2_cols_yields_1_x_2_board() {
     // setup
-    let expected_rows = BoardDimension::new(1).unwrap();
-    let expected_cols = BoardDimension::new(2).unwrap();
-    let expected_prob = Probability::new(0).unwrap();
+    let rows = BoardDimension::new(1).unwrap();
+    let cols = BoardDimension::new(2).unwrap();
+    let prob = Probability::new(0).unwrap();
 
     // given a `GameBoard` constructor
     let sut = GameBoard::new;
 
     // when it is invoked
-    let result = sut(expected_rows, expected_cols, expected_prob);
+    let result = sut(rows, cols, prob);
 
     // then it should return the expected number of rows
-    assert_eq!(result.rows(), expected_rows);
+    assert_eq!(result.rows(), rows.get());
 
     // and it should return the expected number of columns
-    assert_eq!(result.columns(), expected_cols);
+    assert_eq!(result.columns(), cols.get());
 
     // and it should return the expected probability
-    assert_eq!(result.probability(), expected_prob);
+    // no rounding error permitted on the probability set by the caller
+    #[allow(clippy::float_cmp)]
+        {
+            assert_eq!(result.probability(), prob.get());
+        }
 }
 
 #[test]
@@ -58,7 +62,7 @@ fn new_with_mine_probability_1_yields_board_with_all_mines() {
     let prob = Probability::new(1).unwrap();
     // `rows` and `cols` are each range-limited per `BoardDimension` and their product cannot overflow a `u32`.
     #[allow(clippy::integer_arithmetic)]
-        let expected_mine_count = usize::from(rows.get()) * usize::from(cols.get());
+        let expected_mine_count = rows.get() * cols.get();
 
     // given a `GameBoard` constructor
     let sut = GameBoard::new;

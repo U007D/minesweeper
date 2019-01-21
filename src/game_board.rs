@@ -28,8 +28,8 @@ pub struct GameBoard {
 impl GameBoard {
     /// Game board constructor.
     pub fn new(rows: BoardDimension, cols: BoardDimension, prob: Probability) -> Self {
-        let n_rows = usize::from((*rows).get());
-        let n_cols = usize::from((*cols).get());
+        let n_rows = rows.get();
+        let n_cols = cols.get();
         Self {
             cells: Self::init_cells(vec![vec![false; n_cols]; n_rows], prob),
             rows,
@@ -47,7 +47,7 @@ impl GameBoard {
 
         // no precision loss or overflow ∵ `n_rows` & `n_cols` are limited to 16 bits per `BoardDimension` and prob (0..=1).
         #[allow(clippy::cast_possible_truncation, clippy::cast_precision_loss, clippy::cast_sign_loss)]
-            let mine_count = (n_rows as f64 * n_cols as f64 * *prob) as usize;
+            let mine_count = (n_rows as f64 * n_cols as f64 * prob.get()) as usize;
         (0..mine_count).for_each(|_| {
             let mut row_idx: usize;
             let mut col_idx: usize;
@@ -84,13 +84,13 @@ impl GameBoard {
 
     /// Returns the number of game board columns
     #[inline]
-    pub fn columns(&self) -> BoardDimension { self.cols }
+    pub fn columns(&self) -> usize { self.cols.get() }
 
     /// Returns the probability of a mine in a given cell setting used to initialize the game board
     #[inline]
-    pub fn probability(&self) -> Probability { self.prob }
+    pub fn probability(&self) -> f64 { self.prob.get() }
 
     /// Returns the number of game board rows
     #[inline]
-    pub fn rows(&self) -> BoardDimension { self.rows }
+    pub fn rows(&self) -> usize { self.rows.get() }
 }

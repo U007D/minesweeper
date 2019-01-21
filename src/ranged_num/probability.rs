@@ -1,10 +1,4 @@
-use std::{
-    ops::{
-        Deref,
-        DerefMut,
-    },
-    str::FromStr,
-};
+use std::str::FromStr;
 
 use crate::{
     Error,
@@ -39,19 +33,5 @@ impl FromStr for Probability {
             Ok(n) => Probability::new(n),
             Err(err) => Err(Error::ParseFloat(err)),
         }
-    }
-}
-
-impl Deref for Probability {
-    type Target = f64;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl DerefMut for Probability {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
     }
 }

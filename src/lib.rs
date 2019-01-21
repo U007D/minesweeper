@@ -1,5 +1,5 @@
 #![warn(clippy::all)]
-#![allow(unsafe_code)] // Do not remove!  Explicitly change `forbid` to #![allow(unsafe_code)] to use `unsafe` keyword.
+#![forbid(unsafe_code)] // Do not remove!  Explicitly change `forbid` to #![allow(unsafe_code)] to use `unsafe` keyword.
 #![deny(warnings, missing_docs)]
 #![forbid(overflowing_literals)]
 // Uncomment before ship to ensure complete docs, reconcile use of possibly redundant crates and uncover debugremnants
@@ -27,9 +27,9 @@
 //!
 //! ## Design
 //! Minesweeper uses a basic Model-View-Controller (MVC) pattern.  The locations of mines are stored in a structure
-//! representing the board as the `Model`.  The state of revealed cells (revealed vs not revealed, as well as the number
-//! of adjacent mines) on the game board is represented in a structure as the `View`.  And finally the rules of
-//! gameplay are enforced by the `Controller`.
+//! representing the board as the Model (`game_board::GameBoard`).  The state of revealed cells (revealed vs not
+//! revealed, as well as the number of adjacent mines) on the game board and user input on what to reveal next is
+//! managed by `view::View`.  And finally, the rules of gameplay are enforced by the Controller (`minesweeper::run()`).
 use std::result::Result as StdResult;
 
 pub use self::{
