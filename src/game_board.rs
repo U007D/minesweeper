@@ -55,23 +55,28 @@ impl GameBoard {
         (0..mine_count).for_each(|_| {
             let mut row: usize;
             let mut col: usize;
+            // place a mine in a randomly selected cell which must not already contain a mine.
+            // If that cell does already contain a mine, reassign this mine to another randomly selected cell, until
+            // one is found which does not already contain a mine.
             while {
                 row = rng.gen_range(0, rows);
                 col = rng.gen_range(0, cols);
-                //
+
                 // no out-of-bounds indexing  ∵ `row` & `col` are bound by `rows` & `cols.
                 #[allow(clippy::indexing_slicing)]
                 {
-                    cells[row][col]
+                    match &mut cells[row][col] {
+                        // already has a mine; select another cell for this mine
+                        true => true,
+                        // no pre-existing mine: assign the mine to this cell & exit the reassignment loop
+                        val => {
+                            *val = true;
+                            false
+                        }
+                    }
                 }
             } {}
-            // no out-of-bounds indexing  ∵ `row` & `col` are bound by `rows` & `cols.
-            #[allow(clippy::indexing_slicing)]
-                {
-                    cells[row][col] = true;
-            }
         });
-
         cells
     }
 

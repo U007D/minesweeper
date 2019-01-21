@@ -11,7 +11,8 @@ documentation) and
 
 In particular, note the crate-wide strict warning settings and the safe consideration/handling/elision of indexing, 
 bounds-checking, arithmetic overflow, panics, floating-point arithmetic and floating-point precision with respect to 
-potentially lossy casts. Inversion of control and semantic logging have been omitted for brevity.
+potentially lossy casts.  At this point in time, inversion of control and (semantic) logging have been omitted for 
+brevity.
 
 Additionally, this code was developed using a form of of Test Driven Development to evolve the solution through a series
 of [red green refactor](https://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html) cycles.
