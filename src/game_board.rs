@@ -68,7 +68,8 @@ impl GameBoard {
                     match &mut cells[row][col] {
                         // already has a mine; select another cell for this mine
                         true => true,
-                        // no pre-existing mine: assign the mine to this cell & exit the reassignment loop
+                        // cell contains no pre-existing mine: assign the mine to this cell and
+                        // exit the reassignment while loop
                         val => {
                             *val = true;
                             false
