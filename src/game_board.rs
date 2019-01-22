@@ -17,7 +17,7 @@ type CellsVec = Vec<Vec<bool>>;
 #[cfg(test)]
 mod unit_tests;
 /// This struct represents the game board.  It contains the board dimensions and the locations of all mines.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct GameBoard {
     cells: CellsVec,
     rows: BoardDimension,

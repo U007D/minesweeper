@@ -21,7 +21,7 @@ fn new_with_1_row_and_2_cols_yields_1_x_2_board() {
     assert_eq!(result.columns(), cols.get());
 
     // and it should return the expected probability
-    // no rounding error permitted on the probability set by the caller
+    // no rounding error ∵ rounding not permitted on the probability set by the caller
     #[allow(clippy::float_cmp)]
         {
             assert_eq!(result.probability(), prob.get());
@@ -60,7 +60,7 @@ fn new_with_mine_probability_1_yields_board_with_all_mines() {
     let rows = BoardDimension::new(n_rows).unwrap();
     let cols = BoardDimension::new(n_cols).unwrap();
     let prob = Probability::new(1).unwrap();
-    // `rows` and `cols` are each range-limited per `BoardDimension` and their product cannot overflow a `u32`.
+    // no overflow ∵ `rows` and `cols` are each range-limited per `BoardDimension` such that their product fits a u32.
     #[allow(clippy::integer_arithmetic)]
         let expected_mine_count = rows.get() * cols.get();
 

@@ -41,6 +41,7 @@ pub use self::{
         BoardDimension,
         Probability,
     },
+    view::View,
 };
 
 mod args;
@@ -48,6 +49,7 @@ mod consts;
 mod error;
 mod game_board;
 mod ranged_num;
+mod view;
 /// Convenience alias for the `Result` type encoding `minecraft::error::Error` as the default error type.
 pub type Result<T> = StdResult<T, Error>;
 
