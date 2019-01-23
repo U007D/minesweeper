@@ -84,7 +84,7 @@ impl GameBoard {
 
     /// Returns the number of game board columns
     #[inline]
-    pub fn columns(&self) -> usize { self.cols.get() }
+    pub fn cols(&self) -> usize { self.cols.get() }
 
     /// Returns the probability of a mine in a given cell setting used to initialize the game board
     #[inline]

@@ -18,7 +18,7 @@ fn new_with_1_row_and_2_cols_yields_1_x_2_board() {
     assert_eq!(result.rows(), rows.get());
 
     // and it should return the expected number of columns
-    assert_eq!(result.columns(), cols.get());
+    assert_eq!(result.cols(), cols.get());
 
     // and it should return the expected probability
     // no rounding error ∵ rounding not permitted on the probability set by the caller
