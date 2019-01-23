@@ -32,7 +32,7 @@
 //! managed by `view::View`.  And finally, the rules of gameplay are enforced by the Controller (`minesweeper::run()`).
 use std::result::Result as StdResult;
 
-pub use self::{
+pub use {
     args::Args,
     consts::*,
     error::Error,
