@@ -1,5 +1,11 @@
 use std::{
     num::NonZeroU16,
+    str::FromStr,
+};
+
+use crate::{
+    Error,
+    Result
 };
 
 #[cfg(test)]
@@ -24,3 +30,16 @@ impl BoardDimension {
         usize::from(self.0.get())
     }
 }
+
+impl FromStr for BoardDimension {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        match s.parse::<u16>()? {
+            n if n > 0 => Self::new(n)
+                .ok_or_else(|| Error::ArgNotConvertibleToNonZeroUsize(n as usize)),
+            err => Err(Error::ArgNotConvertibleToNonZeroUsize(err as usize)),
+        }
+    }
+}
+

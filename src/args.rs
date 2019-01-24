@@ -1,8 +1,8 @@
 use structopt::StructOpt;
 
 use crate::{
+    BoardDimension,
     Probability,
-    ranged_num::NonZeroUsize,
 };
 
 #[cfg(test)]
@@ -16,11 +16,11 @@ mod unit_tests;
 #[derive(Debug, StructOpt)]
 #[structopt(rename_all = "kebab-case")]
 pub struct Args {
-    /// Number of game board rows
-    pub rows: NonZeroUsize,
-
     /// Number of game board columns
-    pub cols: NonZeroUsize,
+    pub cols: BoardDimension,
+
+    /// Number of game board rows
+    pub rows: BoardDimension,
 
     /// Probability of a mine in each cell
     pub prob: Probability,

@@ -30,7 +30,10 @@
 //! representing the board as the Model (`game_board::GameBoard`).  The state of revealed cells (revealed vs not
 //! revealed, as well as the number of adjacent mines) on the game board and user input on what to reveal next is
 //! managed by `view::View`.  And finally, the rules of gameplay are enforced by the Controller (`minesweeper::run()`).
-use std::result::Result as StdResult;
+use std::{
+    io::stdin,
+    result::Result as StdResult
+};
 
 pub use {
     args::Args,
@@ -56,5 +59,10 @@ pub type Result<T> = StdResult<T, Error>;
 /// Library entry point.
 pub fn run(args: Args) -> Result<()> {
     println!("{:?}", args);
+    let model = GameBoard::new(args.rows, args.cols, args.prob);
+    let stdin = stdin();
+    let reader = stdin.lock();
+    let view = View::new(model, reader);
+    println!("{}", view);
     Ok(())
 }
