@@ -13,6 +13,7 @@ test = false
 [dependencies]
 rand = "0.6.4"
 structopt = "0.2.14"
+derive_more = "0.14.0"
 [profile.dev]
 codegen-units = 1
 debug = true

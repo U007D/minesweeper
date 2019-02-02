@@ -1,6 +1,11 @@
 use std::io::Error as StdIoError;
 
-#[derive(Debug)]
+use derive_more::{
+    Display,
+    From,
+};
+
+#[derive(Debug, Display, From)]
 pub struct IoError(StdIoError);
 
 impl PartialEq for IoError {

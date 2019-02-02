@@ -1,6 +1,6 @@
 #![warn(clippy::all)]
 #![forbid(unsafe_code)] // Do not remove!  Explicitly change `forbid` to #![allow(unsafe_code)] to use `unsafe` keyword.
-#![deny(warnings, missing_docs)]
+//#![deny(warnings, missing_docs)]
 #![forbid(overflowing_literals)]
 // Uncomment before ship to ensure complete docs, reconcile use of possibly redundant crates and uncover debugremnants
 //#![warn(missing_docs, clippy::multiple_crate_versions, clippy::print_stdout, clippy::unimplemented,
